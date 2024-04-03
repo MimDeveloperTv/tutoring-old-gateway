@@ -7,12 +7,55 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Response;
 use App\Lib\Http\Request as CustomRequest;
 
+Route::post('reserves',function (Request $request){
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url')."/reserves",$request->all());
+    return response()->json(json_decode($response->body()),$response->status());
+});
 
+Route::get('appointments',function (Request $request){
+    $user_collection_id = auth('user')->user()->user_collection_id;
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/collection/appointments",[
+        ...$request->all(),
+        'user_collection_id' => $user_collection_id,
+    ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
 
+Route::get('appointments/{id}',function (Request $request,$id){
+    $user_collection_id = auth('user')->user()->user_collection_id;
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/appointments/$id",[
+        'user_collection_id' => $user_collection_id,
+    ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
 
+Route::patch('appointments/{id}/payment-status',function (Request $request,$id){
+    $user_collection_id = auth('user')->user()->user_collection_id;
+    $response = CustomRequest::patch([],[
+        'payment_status' => $request->input('payment_status'),
+    ],'booking',"/appointments/$id/payment-status");
+    return response()->json(json_decode($response->body()),$response->status());
+});
 
-
-
+Route::patch('appointments/{id}/status',function (Request $request,$id){
+    $user_collection_id = auth('user')->user()->user_collection_id;
+    $response = CustomRequest::patch([],[
+        'status' => $request->input('status'),
+    ],'booking',"/appointments/$id/status");
+    return response()->json(json_decode($response->body()),$response->status());
+});
 
 Route::get('services',function(Request $request){
     $user_colelction_id = auth('user')->user()->user_collection_id;
@@ -265,55 +308,6 @@ Route::post('collection/addresses',function(Request $request){
        return response()->json(json_decode($response->body()),$response->status());
  });
 
- Route::post('reserves',function (Request $request){
-     $response = Http::withHeaders([
-         'api_key' => config('microservices.services.booking.api_key'),
-         'Accept' => 'application/json',
-         'Content-Type' => 'application/json'
-     ])->post(config('microservices.services.booking.base_url')."/reserves",$request->all());
-     return response()->json(json_decode($response->body()),$response->status());
- });
-
-Route::get('appointments',function (Request $request){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/collection/appointments",[
-        ...$request->all(),
-        'user_collection_id' => $user_collection_id,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
-});
-
-Route::get('appointments/{id}',function (Request $request,$id){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/appointments/$id",[
-        'user_collection_id' => $user_collection_id,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
-});
-
-Route::patch('appointments/{id}/payment-status',function (Request $request,$id){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $response = CustomRequest::patch([],[
-        'payment_status' => $request->input('payment_status'),
-    ],'booking',"/appointments/$id/payment-status");
-    return response()->json(json_decode($response->body()),$response->status());
-});
-
-Route::patch('appointments/{id}/status',function (Request $request,$id){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $response = CustomRequest::patch([],[
-        'status' => $request->input('status'),
-    ],'booking',"/appointments/$id/status");
-    return response()->json(json_decode($response->body()),$response->status());
-});
 
 Route::get('service-requests',function (Request $request){
     $user_collection_id = auth('user')->user()->user_collection_id;

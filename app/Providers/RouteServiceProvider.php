@@ -29,21 +29,9 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-               Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
-
-               Route::middleware('web')
-                ->prefix('web')
-                ->group(base_path('routes/web.php'));
-
                 Route::middleware('api')
-                ->prefix('form-builder')
-                ->group(base_path('routes/form-builder.php'));
-
-                Route::middleware('api')
-                ->prefix('core-clinic')
-                ->group(base_path('routes/core-clinic.php'));
+                ->prefix('core')
+                ->group(base_path('routes/core.php'));
 
                 Route::middleware([])
                 ->prefix('booking')
@@ -52,7 +40,6 @@ class RouteServiceProvider extends ServiceProvider
                 Route::middleware('api')
                 ->prefix('permission')
                 ->group(base_path('routes/permission.php'));
-
 
         });
     }

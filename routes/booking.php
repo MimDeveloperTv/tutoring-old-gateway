@@ -62,7 +62,7 @@ Route::post('collection/addresses',function(Request $request){
         'Content-Type' => 'application/json'
     ])->post(config('microservices.services.booking.base_url')."/collection/{$user_collection_id}/addresses",[
         'title' => $request->title,
-        'latitude' => $request->lalatitude,
+        'latitude' => $request->latitude,
         'longitude' => $request->longitude,
         'description' => $request->description,
         'phone' => $request->phone,
@@ -71,38 +71,97 @@ Route::post('collection/addresses',function(Request $request){
 });
 //})->middleware('auth:user');
 
-
-/* ---------------------------- Not - Refactored ------------------------------------ */
-
 Route::post('operator/addresses',function(Request $request){
-    $user_id = auth('user')->user()->id;
+//    $user_id = auth('user')->user()->id;
+    $user_id ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
     $response = Http::withHeaders([
         'api_key' => config('microservices.services.booking.api_key'),
         'Accept' => 'application/json',
         'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/operators/addresses",[
-        'user_id' => $user_id,
+    ])->post(config('microservices.services.booking.base_url')."/operators/{$user_id}/addresses",[
+        'title' => $request->title,
         'latitude' => $request->latitude,
         'longitude' => $request->longitude,
         'description' => $request->description,
         'phone' => $request->phone,
     ]);
     return response()->json(json_decode($response->body()),$response->status());
-})->middleware('auth:user');;
+});
+//})->middleware('auth:user');
 
 Route::get('operator/addresses',function(Request $request){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $user_id = auth('user')->user()->id;
+//    $user_id = auth('user')->user()->id;
+    $user_id ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
     $response = Http::withHeaders([
         'api_key' => config('microservices.services.booking.api_key'),
         'Accept' => 'application/json',
         'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/operators/addresses",[
-        'user_id' => $user_id,
-        'user_collection_id' => $user_collection_id
+    ])->get(config('microservices.services.booking.base_url')."/operators/{$user_id}/addresses",[]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
+
+Route::get('operator/applications',function(Request $request){
+    //    $user_id = auth('user')->user()->id;
+    $user_id ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/operators/{$user_id}/applications",[]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+//})->middleware('auth:user');
+
+Route::post('operator/applications',function(Request $request){
+    //    $user_id = auth('user')->user()->id;
+    $user_id ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url')."/operators/{$user_id}/applications",[
+        'service_id' => $request->service_id,
+        'form_id' => $request->form_id,
+        'duration' => $request->duration,
+        'price' => $request->price,
+        'break' => $request->break,
+        'capacity' => $request->capacity,
     ]);
     return response()->json(json_decode($response->body()),$response->status());
 });
+//})->middleware('auth:user');
+
+Route::get('operator/application-places/{applicationId}',function(Request $request,$applicationId){
+    //    $userId = auth('user')->user()->id;
+    $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url').
+        "/operators/{$userId}/application-places/{$applicationId}",[]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+//})->middleware('auth:user');
+
+Route::post('operator/application-places/{applicationId}',function(Request $request,$applicationId){
+    //    $userId = auth('user')->user()->id;
+    $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url').
+        "/operators/{$userId}/application-places/{$applicationId}",[
+        'address_id' => $request->address_id,
+        'isActive' => $request->isActive,
+    ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+//})->middleware('auth:user');
+
+/* ---------------------------- Not - Refactored ------------------------------------ */
 
 
 Route::post('reserves',function (Request $request){
@@ -173,58 +232,6 @@ Route::get('appointable-items',function(Request $request){
     ])->get(config('microservices.services.booking.base_url')."/services",$request->all());
     return response()->json(json_decode($response->body()),$response->status());
  });
-
- Route::get('service-applications',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/service-applications",[
-        'operator_id' => $request->operator_id
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
-
- Route::post('service-applications',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/service-applications",[
-        'service_id' => $request->service_id,
-        'form_id' => $request->form_id,
-        'duration' => $request->duration,
-        'price' => $request->price,
-        'break' => $request->break,
-        'capacity' => $request->capacity,
-        'operator_id' =>$request->operator_id
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
-
- Route::get('service-application-places',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/service-application-places",[
-        'service_application_id' => $request->service_application_id
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
-
- Route::post('service-application-places',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/service-application-places",[
-        'service_application_id' =>$request->service_application_id,
-        'address_id' => $request->address_id,
-        'isActive' => $request->isActive,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
 
 
 
@@ -306,9 +313,6 @@ Route::get('appointable-items',function(Request $request){
     ]);
     return response()->json(json_decode($response->body()),$response->status());
  })->middleware('auth:user');
-
-
-
 
 
  Route::get('/service-application-place/slots',function(Request $request){

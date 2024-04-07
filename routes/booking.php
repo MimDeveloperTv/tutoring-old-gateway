@@ -58,33 +58,37 @@ Route::patch('appointments/{id}/status',function (Request $request,$id){
 });
 
 Route::get('services',function(Request $request){
-    $user_colelction_id = auth('user')->user()->user_collection_id;
+//    $user_colelction_id = auth('user')->user()->user_collection_id;
+    $user_colelction_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
     $response = Http::withHeaders([
      'api_key' => config('microservices.services.booking.api_key'),
      'Accept' => 'application/json',
      'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",[
-        'type' => $request->type
-    ]);
+    ])->get(config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",[]);
     return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
+ });
+// })->middleware('auth:user');
 
  Route::post('services',function(Request $request){
-    $user_colelction_id = auth('user')->user()->user_collection_id;
+  //  $user_colelction_id = auth('user')->user()->user_collection_id;
+    $user_colelction_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
     $response = Http::withHeaders([
      'api_key' => config('microservices.services.booking.api_key'),
      'Accept' => 'application/json',
      'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",[
+    ])->post(
+        config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",
+        [
         'form_id' => $request->form_id,
-        'default_duration' => $request->duration,
-        'default_price' => $request->price,
-        'default_break' => $request->break,
-        'default_capacity' => $request->capacity,
+        'default_duration' => $request->default_duration,
+        'default_price' => $request->default_price,
+        'default_break' => $request->default_break,
+        'default_capacity' => $request->default_capacity,
         'service_model_id' =>$request->service_model_id
     ]);
     return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
+ });
+ //})->middleware('auth:user');
 
 Route::get('appointable-items',function(Request $request){
    $user_collection_id  = auth('user')->user()->user_collection_id;

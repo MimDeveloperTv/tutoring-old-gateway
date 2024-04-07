@@ -7,6 +7,104 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Response;
 use App\Lib\Http\Request as CustomRequest;
 
+Route::get('collection/services',function(Request $request){
+//    $user_colelction_id = auth('user')->user()->user_collection_id;
+    $user_colelction_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",[]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+// })->middleware('auth:user');
+
+Route::post('collection/services',function(Request $request){
+    //  $user_colelction_id = auth('user')->user()->user_collection_id;
+    $user_colelction_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(
+        config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",
+        [
+            'form_id' => $request->form_id,
+            'default_duration' => $request->default_duration,
+            'default_price' => $request->default_price,
+            'default_break' => $request->default_break,
+            'default_capacity' => $request->default_capacity,
+            'service_model_id' =>$request->service_model_id
+        ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+//})->middleware('auth:user');
+
+
+Route::get('collection/addresses',function(Request $request){
+//    $user_collection_id = auth('user')->user()->user_collection_id;
+    $user_collection_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/collection/{$user_collection_id}/addresses",[]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+//})->middleware('auth:user');
+
+Route::post('collection/addresses',function(Request $request){
+//    $user_collection_id = auth('user')->user()->user_collection_id;
+    $user_collection_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url')."/collection/{$user_collection_id}/addresses",[
+        'title' => $request->title,
+        'latitude' => $request->lalatitude,
+        'longitude' => $request->longitude,
+        'description' => $request->description,
+        'phone' => $request->phone,
+    ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+//})->middleware('auth:user');
+
+
+/* ---------------------------- Not - Refactored ------------------------------------ */
+
+Route::post('operator/addresses',function(Request $request){
+    $user_id = auth('user')->user()->id;
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url')."/operators/addresses",[
+        'user_id' => $user_id,
+        'latitude' => $request->latitude,
+        'longitude' => $request->longitude,
+        'description' => $request->description,
+        'phone' => $request->phone,
+    ]);
+    return response()->json(json_decode($response->body()),$response->status());
+})->middleware('auth:user');;
+
+Route::get('operator/addresses',function(Request $request){
+    $user_collection_id = auth('user')->user()->user_collection_id;
+    $user_id = auth('user')->user()->id;
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/operators/addresses",[
+        'user_id' => $user_id,
+        'user_collection_id' => $user_collection_id
+    ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
+
 Route::post('reserves',function (Request $request){
     $response = Http::withHeaders([
         'api_key' => config('microservices.services.booking.api_key'),
@@ -56,39 +154,6 @@ Route::patch('appointments/{id}/status',function (Request $request,$id){
     ],'booking',"/appointments/$id/status");
     return response()->json(json_decode($response->body()),$response->status());
 });
-
-Route::get('services',function(Request $request){
-//    $user_colelction_id = auth('user')->user()->user_collection_id;
-    $user_colelction_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",[]);
-    return response()->json(json_decode($response->body()),$response->status());
- });
-// })->middleware('auth:user');
-
- Route::post('services',function(Request $request){
-  //  $user_colelction_id = auth('user')->user()->user_collection_id;
-    $user_colelction_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->post(
-        config('microservices.services.booking.base_url')."/collection/$user_colelction_id/services",
-        [
-        'form_id' => $request->form_id,
-        'default_duration' => $request->default_duration,
-        'default_price' => $request->default_price,
-        'default_break' => $request->default_break,
-        'default_capacity' => $request->default_capacity,
-        'service_model_id' =>$request->service_model_id
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- });
- //})->middleware('auth:user');
 
 Route::get('appointable-items',function(Request $request){
    $user_collection_id  = auth('user')->user()->user_collection_id;
@@ -242,64 +307,7 @@ Route::get('appointable-items',function(Request $request){
     return response()->json(json_decode($response->body()),$response->status());
  })->middleware('auth:user');
 
- Route::post('operator/addresses',function(Request $request){
-    $user_id = auth('user')->user()->id;
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-       ])->post(config('microservices.services.booking.base_url')."/operators/addresses",[
-           'user_id' => $user_id,
-           'latitude' => $request->latitude,
-           'longitude' => $request->longitude,
-           'description' => $request->description,
-           'phone' => $request->phone,
-       ]);
-       return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');;
 
- Route::get('operator/addresses',function(Request $request){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $user_id = auth('user')->user()->id;
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-       ])->get(config('microservices.services.booking.base_url')."/operators/addresses",[
-           'user_id' => $user_id,
-           'user_collection_id' => $user_collection_id
-       ]);
-       return response()->json(json_decode($response->body()),$response->status());
- });
-
-Route::get('collection/addresses',function(Request $request){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/collection/addresses",[
-        'user_collection_id' => $user_collection_id,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
-})->middleware('auth:user');
-
-Route::post('collection/addresses',function(Request $request){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/collection/addresses",[
-        'user_collection_id' => $user_collection_id,
-        'title' => $request->title,
-        'latitude' => $request->lalatitude,
-        'longitude' => $request->longitude,
-        'description' => $request->description,
-        'phone' => $request->phone,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
-})->middleware('auth:user');
 
 
 

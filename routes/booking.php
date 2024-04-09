@@ -215,9 +215,56 @@ Route::get('operator/application-items',function (Request $request){
 });
 
 
+Route::get('schedules/weekly/operators',function(Request $request){
+    $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/schedules/weekly/operators/{$userId}",[]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
+Route::post('schedules/weekly/operators',function(Request $request){
+    $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url')."/schedules/weekly/operators/{$userId}", $request->all());
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
+
+Route::post('schedules/exception/applications/{applicationId}',function(Request $request,$applicationId){
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url')."/schedules/exception/applications/{$applicationId}",
+        [
+            'place_id' => $request->place_id,
+            'from' => $request->from,
+            'to' => $request->to,
+            'online' => $request->online,
+            'onAnotherSite' => $request->onAnotherSite,
+            'isAvailable' => $request->isAvailable
+        ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
+Route::get('schedules/exception/applications/{applicationId}',function(Request $request,$applicationId){
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->get(config('microservices.services.booking.base_url')."/schedules/exception/applications/{$applicationId}",
+        []);
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
 
 /* ---------------------------- Not - Refactored ------------------------------------ */
-
 /* ---------------------------- todo: Moved To Core Service ------------------------------------ */
 Route::get('reserves/{id}',function (Request $request,$id){
     $user_collection_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
@@ -231,80 +278,6 @@ Route::get('reserves/{id}',function (Request $request,$id){
     return response()->json(json_decode($response->body()),$response->status());
 });
 /* ---------------------------- todo: Moved To Core Service ------------------------------------ */
-
-
- Route::get('weekly-schedules',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/weekly-schedules",[
-        'operator_id' =>$request->operator_id,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
-
- Route::post('weekly-schedules',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/weekly-schedules",$request->all());
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
-
- Route::post('exception-schedules',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/exception-schedules",[
-        'service_application_id' => $request->service_application_id,
-        'place_id' => $request->place_id,
-        'from' => $request->from,
-        'to' => $request->to,
-        'online' => $request->online,
-        'onAnotherSite' => $request->onAnotherSite,
-        'isAvailable' => $request->isAvailable
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
-
- Route::get('exception-schedules',function(Request $request){
-    $response = Http::withHeaders([
-     'api_key' => config('microservices.services.booking.api_key'),
-     'Accept' => 'application/json',
-     'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/exception-schedules",[
-        'service_application_id' =>$request->service_application_id,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
- })->middleware('auth:user');
-
-
-
-Route::get('service-requests',function (Request $request){
-    $user_collection_id = auth('user')->user()->user_collection_id;
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/service-requests",[
-        'user_collection_id' => $user_collection_id,
-        'flag' => $request->flag,
-        'consumer_id' => $request->consumer_id
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
-});
-
-Route::post('service-requests',function (Request $request){
-    $response = CustomRequest::post([],[
-        'service_model_item_id' => $request->service_model_item_id,
-        'consumer_id' => $request->consumer_id
-    ],'booking','/service-requests');
-    return response()->json(json_decode($response->body()),$response->status());
-});
-
 
 
 

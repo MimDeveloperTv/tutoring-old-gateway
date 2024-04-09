@@ -169,18 +169,6 @@ Route::post('operator/application-places/{applicationId}',function(Request $requ
 });
 
 
-Route::post('reserves',function (Request $request){
-    $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
-         'X-USER-ID' => $userId
-    ])->post(config('microservices.services.booking.base_url')."/reserves",$request->all());
-    return response()->json(json_decode($response->body()),$response->status());
-});
-
-
 Route::get('services/{serviceId}/operators',function(Request $request,$serviceId){
     $response = Http::withHeaders([
         'api_key' => config('microservices.services.booking.api_key'),
@@ -190,18 +178,6 @@ Route::get('services/{serviceId}/operators',function(Request $request,$serviceId
     return response()->json(json_decode($response->body()),$response->status());
 });
 
-Route::post('/reserves/slots',function(Request $request){
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->post(config('microservices.services.booking.base_url')."/reserves/slots",
-        [
-            'place_id' => $request->place_id,
-            'to_date' => $request->to_date,
-        ]);
-    return response()->json(json_decode($response->body()),$response->status());
-});
 
 Route::get('operator/application-items',function (Request $request){
     $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
@@ -262,22 +238,6 @@ Route::get('schedules/exception/applications/{applicationId}',function(Request $
         []);
     return response()->json(json_decode($response->body()),$response->status());
 });
-
-
-/* ---------------------------- Not - Refactored ------------------------------------ */
-/* ---------------------------- todo: Moved To Core Service ------------------------------------ */
-Route::get('reserves/{id}',function (Request $request,$id){
-    $user_collection_id = '84b15c1f-7f0e-411e-9a0c-d5626653b751';
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/appointments/$id",[
-        'user_collection_id' => $user_collection_id,
-    ]);
-    return response()->json(json_decode($response->body()),$response->status());
-});
-/* ---------------------------- todo: Moved To Core Service ------------------------------------ */
 
 
 

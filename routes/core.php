@@ -60,6 +60,41 @@ Route::group(['middleware' => []], function () {
 
 });
 
+Route::get('reserves/{id}',function (Request $request,$id){
+
+    $response =  CustomRequest::get([ 'domain' => $request->header('domain') ?? 'guest'], [],
+        'core_clinic', "/reserves/{$id}?XDEBUG_SESSION=true");
+
+    return response()->json(json_decode($response->body()), $response->status());
+});
+
+Route::post('reserves',function (Request $request){
+    $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response =  CustomRequest::post([
+        'domain' => $request->header('domain') ?? 'guest',
+        'X-USER-ID' => $userId
+    ], $request->all(),
+        'core_clinic', "/reserves?XDEBUG_SESSION=true");
+
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
+
+Route::post('/reserves/slots',function (Request $request){
+    $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
+    $response =  CustomRequest::post([
+        'domain' => $request->header('domain') ?? 'guest',
+        'X-USER-ID' => $userId
+    ], [
+        'place_id' => $request->place_id,
+        'to_date' => $request->to_date,
+    ],
+        'core_clinic', "/reserves/slots?XDEBUG_SESSION=true");
+
+    return response()->json(json_decode($response->body()),$response->status());
+});
+
+
 function custom_response($response): \Illuminate\Http\JsonResponse
 {
     try {

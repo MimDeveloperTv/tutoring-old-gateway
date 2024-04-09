@@ -188,7 +188,7 @@ Route::post('operator/application-places/{applicationId}',function(Request $requ
 //})->middleware('auth:user');
 
 
-Route::post('reserves',function (Request $request){
+Route::post('reserve',function (Request $request){
 
     //    $userId = auth('user')->user()->id;
     $userId ='716caa6e-e4fc-4244-b5b0-f84768b2fbe6';
@@ -198,7 +198,7 @@ Route::post('reserves',function (Request $request){
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
          'X-USER-ID' => $userId
-    ])->post(config('microservices.services.booking.base_url')."/reserves?XDEBUG_SESSION=true",$request->all());
+    ])->post(config('microservices.services.booking.base_url')."/reserve",$request->all());
     return response()->json(json_decode($response->body()),$response->status());
 });
 //})->middleware('auth:user');
@@ -221,7 +221,18 @@ Route::get('services/{serviceId}/operators',function(Request $request,$serviceId
 //})->middleware('auth:user');
 });
 
-
+Route::post('/reserve/slots',function(Request $request){
+    $response = Http::withHeaders([
+        'api_key' => config('microservices.services.booking.api_key'),
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+    ])->post(config('microservices.services.booking.base_url')."/reserve/slots",
+        [
+            'place_id' => $request->place_id,
+            'to_date' => $request->to_date,
+        ]);
+    return response()->json(json_decode($response->body()),$response->status());
+});
 
 
 
@@ -242,15 +253,6 @@ Route::get('appointments/{id}',function (Request $request,$id){
 /* ---------------------------- todo: Moved To Core Service ------------------------------------ */
 
 
-
-Route::get('/service-application-place/slots',function(Request $request){
-    $response = Http::withHeaders([
-        'api_key' => config('microservices.services.booking.api_key'),
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-    ])->get(config('microservices.services.booking.base_url')."/service-application-place/slots",$request->all());
-    return response()->json(json_decode($response->body()),$response->status());
-});
 
 
 Route::get('service-requests',function (Request $request){
